@@ -37,8 +37,8 @@ export class AuthResolver {
   }
 
   @Query(() => UserType, { description: 'Obtener usuario actual' })
-  async me(@CurrentUser() user: User): Promise<UserType> {
-    const currentUser = await this.authService.validateUser(user.id);
+  me(@CurrentUser() user: User): UserType {
+    const currentUser = this.authService.validateUser(user.id);
 
     if (!currentUser) {
       throw new Error('Usuario no encontrado');

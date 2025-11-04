@@ -13,6 +13,7 @@ async function bootstrap() {
 
   // CORS configuration
   app.enableCors({
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     origin: configService.get('CORS_ORIGIN')?.split(',') || '*',
     credentials: true,
   });

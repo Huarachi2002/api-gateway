@@ -6,6 +6,8 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
+import { PatientsModule } from './gateway/pacientes/patients.module';
+import { LabTestsModule } from './gateway/solicitudes/solicitudes.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
 @Module({
@@ -25,8 +27,9 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
         sortSchema: true,
         playground: configService.get('GRAPHQL_PLAYGROUND') === 'true',
         introspection: configService.get('GRAPHQL_INTROSPECTION') === 'true',
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         context: ({ req, res }) => ({ req, res }),
-        formatError: (error) => {
+        formatError: error => {
           return {
             message: error.message,
             code: error.extensions?.code,
@@ -51,6 +54,8 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
     // Feature Modules
     AuthModule,
+    PatientsModule,
+    LabTestsModule,
   ],
   providers: [
     // Global JWT Guard
