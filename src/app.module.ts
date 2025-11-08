@@ -2,13 +2,14 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
-import { PatientsModule } from './gateway/pacientes/patients.module';
+import { UsuariosModule } from './gateway/usuarios/usuarios.module';
 import { LabTestsModule } from './gateway/solicitudes/solicitudes.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { GqlThrottlerGuard } from './common/guards/graphql-throttler.guard';
 
 @Module({
   imports: [
@@ -28,8 +29,21 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
         playground: configService.get('GRAPHQL_PLAYGROUND') === 'true',
         introspection: configService.get('GRAPHQL_INTROSPECTION') === 'true',
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        context: ({ req, res }) => ({ req, res }),
+        context: ({ req, res }) => {
+          // Asegurar que req existe
+          if (!req) {
+            console.warn('⚠️ Request no disponible en contexto GraphQL');
+            return { req: {}, res };
+          }
+          return { req, res };
+        },
         formatError: error => {
+          console.error('GraphQL Error:', {
+            message: error.message,
+            code: error.extensions?.code,
+            path: error.path,
+            originalError: error.extensions?.originalError,
+          });
           return {
             message: error.message,
             code: error.extensions?.code,
@@ -54,20 +68,21 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
     // Feature Modules
     AuthModule,
-    PatientsModule,
+    UsuariosModule,
     LabTestsModule,
   ],
   providers: [
-    // Global JWT Guard
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-    // Global Rate Limiting
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    // 🔓 SEGURIDAD DESACTIVADA PARA DESARROLLO
+    // Global JWT Guard (DESACTIVADO)
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: JwtAuthGuard,
+    // },
+    // Global Rate Limiting (DESACTIVADO)
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: GqlThrottlerGuard,
+    // },
   ],
 })
 export class AppModule {}

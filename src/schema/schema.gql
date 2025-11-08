@@ -8,12 +8,21 @@ type AuthResponse {
   user: UserType!
 }
 
+input CreatePacienteInput {
+  apellido: String!
+  correo: String!
+  direccion: String!
+  fechaNacimiento: String!
+  nombre: String!
+  telefono: String!
+}
+
 input CreatePatientInput {
-  address: String
-  age: Float!
-  email: String!
-  name: String!
-  phone: String
+  apellido: String!
+  datos_biometricos: String
+  foto_carnet_b64: String!
+  nombre: String!
+  telefono_whatsapp: String
 }
 
 """
@@ -21,23 +30,15 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type LabTest {
-  completedAt: DateTime
-  createdAt: DateTime!
-  description: String
-  id: ID!
-  patientId: String!
-  results: [TestResult!]
-  status: String!
-  type: String!
-}
-
 input LoginInput {
   email: String!
   password: String!
 }
 
 type Mutation {
+  """Crear un nuevo paciente"""
+  createPaciente(input: CreatePacienteInput!): Paciente!
+
   """Crear un nuevo paciente"""
   createPatient(input: CreatePatientInput!): Patient!
 
@@ -54,31 +55,48 @@ type Mutation {
   register(registerInput: RegisterInput!): AuthResponse!
 
   """Actualizar un paciente existente"""
+  updatePaciente(id: ID!, input: UpdatePacienteInput!): Paciente!
+
+  """Actualizar un paciente existente"""
   updatePatient(id: ID!, input: UpdatePatientInput!): Patient!
 }
 
+type Paciente {
+  apellido: String!
+  correo: String!
+  direccion: String!
+  fechaNacimiento: String!
+  id: String!
+  nombre: String!
+  telefono: String!
+}
+
 type Patient {
-  address: String
-  age: Float!
+  apellido: String!
   createdAt: DateTime!
-  email: String!
+  datos_biometricos: String
+  foto_carnet_b64: String!
   id: ID!
-  isActive: Boolean!
-  labTests: [LabTest!]
-  name: String!
-  phone: String
+
+  """Análisis de laboratorio del paciente"""
+  labTests: [Resultado!]!
+  nombre: String!
+  telefono_whatsapp: String
   updatedAt: DateTime
 }
 
 type Query {
   """Obtener un análisis de laboratorio por ID"""
-  labTest(id: ID!): LabTest!
+  labTest(id: ID!): Resultado!
 
   """Obtener análisis de laboratorio de un paciente"""
-  labTestsByPatient(patientId: ID!): [LabTest!]!
+  labTestsByPatient(patientId: ID!): [Resultado!]!
 
   """Obtener usuario actual"""
   me: UserType!
+
+  """Obtener un paciente por ID"""
+  paciente(id: ID!): Paciente!
 
   """Obtener un paciente por su ID"""
   patient(id: ID!): Patient!
@@ -97,21 +115,28 @@ input RegisterInput {
   role: String!
 }
 
-type TestResult {
-  normalRange: String!
-  parameter: String!
-  status: String
-  unit: String!
-  value: String!
+type Resultado {
+  fecha_publicacion: DateTime!
+  resultado_id: Float!
+  solicitud_id: String!
+  url_pdf_resultado: String!
+}
+
+input UpdatePacienteInput {
+  apellido: String!
+  correo: String!
+  direccion: String!
+  fechaNacimiento: String!
+  nombre: String!
+  telefono: String!
 }
 
 input UpdatePatientInput {
-  address: String
-  age: Float
-  email: String
-  isActive: Boolean
-  name: String
-  phone: String
+  apellido: String
+  datos_biometricos: String
+  foto_carnet_b64: String
+  nombre: String
+  telefono_whatsapp: String
 }
 
 type UserType {

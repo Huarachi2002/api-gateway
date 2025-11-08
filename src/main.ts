@@ -8,15 +8,15 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
-  // Global prefix
-  app.setGlobalPrefix('api');
-
-  // CORS configuration
+  // CORS configuration (ANTES del global prefix)
   app.enableCors({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     origin: configService.get('CORS_ORIGIN')?.split(',') || '*',
     credentials: true,
   });
+
+  // Global prefix (GraphQL no se verá afectado por esto)
+  // app.setGlobalPrefix('api');
 
   // Global Validation Pipe
   app.useGlobalPipes(

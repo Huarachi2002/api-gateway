@@ -7,8 +7,9 @@ import { LabTestsResolver } from './solicitudes.resolver';
 @Module({
   imports: [
     HttpModule.register({
-      timeout: 5000,
+      timeout: 10000,
       maxRedirects: 5,
+      validateStatus: () => true, // Aceptar todas las respuestas HTTP
     }),
     ConfigModule,
   ],

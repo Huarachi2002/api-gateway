@@ -7,33 +7,28 @@ import { CreatePatientInput } from './dto/create-paciente.input';
 import { UpdatePatientInput } from './dto/update-paciente.input';
 
 @Injectable()
-export class PatientsService {
+export class UsuariosService {
   private readonly baseUrl: string;
 
   constructor(
     private httpService: HttpService,
     private configService: ConfigService,
   ) {
-    // URL del microservicio de pacientes (Spring Boot, FastAPI, etc.)
+    // URL del microservicio de usuarios (Spring Boot, FastAPI, etc.)
     this.baseUrl =
-      this.configService.get('PATIENTS_SERVICE_URL') ||
-      'http://localhost:8080/api/patients';
+      this.configService.get('USUARIOS_SERVICE_URL') ||
+      'http://localhost:3002/api/';
   }
 
   /**
-   * Obtener paciente por ID
-   * Llama a: GET http://patient-service:8080/api/patients/{id}
+   * Obtener usuario   por ID
+   * Llama a: GET http://usuarios-service:3002/api/usuarios/{id}
    *
    * Ejemplo de respuesta del microservicio:
    * {
    *   "id": "123",
    *   "name": "Juan Pérez",
    *   "email": "juan@example.com",
-   *   "age": 30,
-   *   "phone": "+591 70123456",
-   *   "address": "Av. Banzer 123",
-   *   "isActive": true,
-   *   "createdAt": "2025-11-04T10:30:00Z"
    * }
    */
   async findById(id: string): Promise<Patient> {

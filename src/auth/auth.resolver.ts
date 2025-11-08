@@ -36,6 +36,7 @@ export class AuthResolver {
     return this.authService.refreshToken(refreshToken);
   }
 
+  @Public()
   @Query(() => UserType, { description: 'Obtener usuario actual' })
   me(@CurrentUser() user: User): UserType {
     const currentUser = this.authService.validateUser(user.id);

@@ -113,12 +113,12 @@
    • Si no tiene permiso → 403 Forbidden
    • Si tiene permiso → continúa
    
-4️⃣ API GATEWAY - PatientsResolver.getPatient()
+4️⃣ API GATEWAY - UsuariosResolver.getPatient()
    ↓
    • Recibe id: "123"
-   • Llama a PatientsService.findById("123")
+   • Llama a UsuariosService.findById("123")
    
-5️⃣ API GATEWAY - PatientsService
+5️⃣ API GATEWAY - UsuariosService
    ↓
    HTTP Request:
    GET http://patient-service:8080/api/patients/123
@@ -138,11 +138,11 @@
    
 7️⃣ API GATEWAY recibe respuesta
    ↓
-   • PatientsService devuelve Patient object
+   • UsuariosService devuelve Patient object
    • GraphQL detecta que se pidió campo 'labTests'
-   • Ejecuta PatientsResolver.labTests(patient)
+   • Ejecuta UsuariosResolver.labTests(patient)
    
-8️⃣ API GATEWAY - PatientsResolver.labTests()
+8️⃣ API GATEWAY - UsuariosResolver.labTests()
    ↓
    • Recibe patient.id = "123"
    • Llama a LabTestsService.findByPatientId("123")

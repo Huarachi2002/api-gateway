@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
-import { PatientsService } from './patients.service';
-import { PatientsResolver } from './patients.resolver';
+import { UsuariosService } from './usuarios.service';
+import { UsuariosResolver } from './usuarios.resolver';
 import { LabTestsModule } from '../solicitudes/solicitudes.module';
 
 @Module({
@@ -14,7 +14,7 @@ import { LabTestsModule } from '../solicitudes/solicitudes.module';
     ConfigModule,
     LabTestsModule, // Importar para poder usar LabTestsService en el resolver
   ],
-  providers: [PatientsService, PatientsResolver],
-  exports: [PatientsService],
+  providers: [UsuariosService, UsuariosResolver],
+  exports: [UsuariosService],
 })
-export class PatientsModule {}
+export class UsuariosModule {}

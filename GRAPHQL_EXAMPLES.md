@@ -179,7 +179,7 @@ query SearchPatients {
 }
 ```
 
-### 8. Crear Paciente
+### 8. Crear Paciente (Módulo Usuarios)
 
 ```graphql
 mutation CreatePatient {
@@ -200,6 +200,48 @@ mutation CreatePatient {
     address
     isActive
     createdAt
+  }
+}
+```
+
+### 8b. Crear Paciente (Módulo Solicitudes)
+
+```graphql
+mutation CreatePaciente {
+  createPaciente(
+    input: {
+      nombre: "Ana López"
+      apellido: "Fernández"
+      correo: "ana.lopez@example.com"
+      direccion: "Av. Cristo Redentor 789"
+      telefono: "+591 70654321"
+      fechaNacimiento: "1990-05-15"
+    }
+  ) {
+    id
+    nombre
+    apellido
+    correo
+    direccion
+    telefono
+    fechaNacimiento
+  }
+}
+```
+
+**Respuesta:**
+```json
+{
+  "data": {
+    "createPaciente": {
+      "id": "789",
+      "nombre": "Ana",
+      "apellido": "Fernández",
+      "correo": "ana.lopez@example.com",
+      "direccion": "Av. Cristo Redentor 789",
+      "telefono": "+591 70654321",
+      "fechaNacimiento": "1990-05-15"
+    }
   }
 }
 ```
@@ -392,9 +434,9 @@ query GetPatientWithLabTests {
 
 **🎯 Lo que sucede internamente:**
 1. GraphQL Gateway recibe la query
-2. Ejecuta `PatientsResolver.getPatient("123")`
-3. PatientsService hace HTTP GET a `http://patient-service:8080/api/patients/123`
-4. Como el cliente pidió `labTests`, ejecuta `PatientsResolver.labTests(patient)`
+2. Ejecuta `UsuariosResolver.getPatient("123")`
+3. UsuariosService hace HTTP GET a `http://patient-service:8080/api/patients/123`
+4. Como el cliente pidió `labTests`, ejecuta `UsuariosResolver.labTests(patient)`
 5. LabTestsService hace HTTP GET a `http://labtest-service:8000/api/lab-tests?patientId=123`
 6. GraphQL combina ambas respuestas automáticamente
 7. Devuelve 1 sola respuesta unificada al cliente

@@ -16,6 +16,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
         let status = HttpStatus.INTERNAL_SERVER_ERROR;
         let message = 'Error interno del servidor';
 
+        console.error('=== EXCEPTION FILTER ===');
+        console.error('Exception type:', exception?.constructor?.name);
+        console.error('Exception:', exception);
+
         if (exception instanceof HttpException) {
             status = exception.getStatus();
             const response = exception.getResponse();
@@ -23,6 +27,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
                 typeof response === 'string'
                     ? response
                     : (response as any).message || message;
+        } else if (exception instanceof Error) {
+            message = exception.message;
+            console.error('Error stack:', exception.stack);
         }
 
         console.error('Error capturado: ', {
@@ -30,6 +37,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             message,
             timestamp: new Date().toISOString(),
             path: context?.req?.url,
+            stack: exception instanceof Error ? exception.stack : undefined,
         });
 
         throw exception;

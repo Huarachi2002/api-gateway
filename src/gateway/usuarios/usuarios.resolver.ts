@@ -7,17 +7,11 @@ import {
   ResolveField,
   Parent,
 } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
-import { PatientsService } from './patients.service';
+import { UsuariosService } from './usuarios.service';
 import { LabTestsService } from '../solicitudes/solicitudes.service';
 import { Patient } from './dto/paciente.type';
-// import { LabTest } from '../solicitudes/dto/resultado.type';
 import { CreatePatientInput } from './dto/create-paciente.input';
 import { UpdatePatientInput } from './dto/update-paciente.input';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../auth/guards/roles.guard';
-import { Roles } from '../../auth/decorators/roles.decorator';
-import { Role } from '../../common/enums/role.enum';
 import { Resultado } from '../solicitudes/dto/resultado.type';
 
 /**
@@ -26,18 +20,19 @@ import { Resultado } from '../solicitudes/dto/resultado.type';
  * Este resolver expone operaciones GraphQL para gestionar pacientes.
  * Internamente, hace llamadas HTTP al microservicio de pacientes (Spring Boot/FastAPI).
  *
+ * 🔓 SEGURIDAD DESACTIVADA - Sin autenticación ni roles
+ *
  * Flujo:
  * 1. Cliente envía query/mutation GraphQL
  * 2. Este resolver recibe la petición
- * 3. Llama al PatientsService
- * 4. PatientsService hace HTTP request al microservicio externo
+ * 3. Llama al UsuariosService
+ * 4. UsuariosService hace HTTP request al microservicio externo
  * 5. Respuesta del microservicio se devuelve al cliente
  */
 @Resolver(() => Patient)
-@UseGuards(JwtAuthGuard, RolesGuard)
-export class PatientsResolver {
+export class UsuariosResolver {
   constructor(
-    private patientsService: PatientsService,
+    private UsuariosService: UsuariosService,
     private labTestsService: LabTestsService,
   ) {}
 
@@ -61,11 +56,10 @@ export class PatientsResolver {
     name: 'patient',
     description: 'Obtener un paciente por su ID',
   })
-  @Roles(Role.ADMIN, Role.DOCTOR, Role.RECEPTIONIST, Role.LABORATORY_TECH)
   async getPatient(
     @Args('id', { type: () => ID }) id: string,
   ): Promise<Patient> {
-    return this.patientsService.findById(id);
+    return this.UsuariosService.findById(id);
   }
 
   /**
@@ -86,14 +80,13 @@ export class PatientsResolver {
     name: 'patients',
     description: 'Listar todos los pacientes (con paginación)',
   })
-  @Roles(Role.ADMIN, Role.DOCTOR, Role.RECEPTIONIST, Role.LABORATORY_TECH)
   async getPatients(
     @Args('limit', { type: () => Number, nullable: true, defaultValue: 10 })
     limit?: number,
     @Args('offset', { type: () => Number, nullable: true, defaultValue: 0 })
     offset?: number,
   ): Promise<Patient[]> {
-    return this.patientsService.findAll(limit, offset);
+    return this.UsuariosService.findAll(limit, offset);
   }
 
   /**
@@ -114,11 +107,10 @@ export class PatientsResolver {
     name: 'searchPatients',
     description: 'Buscar pacientes por nombre o email',
   })
-  @Roles(Role.ADMIN, Role.DOCTOR, Role.RECEPTIONIST)
   async searchPatients(
     @Args('query', { type: () => String }) query: string,
   ): Promise<Patient[]> {
-    return this.patientsService.search(query);
+    return this.UsuariosService.search(query);
   }
 
   // ✍️ ========== MUTATIONS (Escritura) ==========
@@ -145,11 +137,10 @@ export class PatientsResolver {
   @Mutation(() => Patient, {
     description: 'Crear un nuevo paciente',
   })
-  @Roles(Role.ADMIN, Role.RECEPTIONIST)
   async createPatient(
     @Args('input') input: CreatePatientInput,
   ): Promise<Patient> {
-    return this.patientsService.create(input);
+    return this.UsuariosService.create(input);
   }
 
   /**
@@ -175,12 +166,11 @@ export class PatientsResolver {
   @Mutation(() => Patient, {
     description: 'Actualizar un paciente existente',
   })
-  @Roles(Role.ADMIN, Role.RECEPTIONIST)
   async updatePatient(
     @Args('id', { type: () => ID }) id: string,
     @Args('input') input: UpdatePatientInput,
   ): Promise<Patient> {
-    return this.patientsService.update(id, input);
+    return this.UsuariosService.update(id, input);
   }
 
   /**
@@ -196,11 +186,10 @@ export class PatientsResolver {
   @Mutation(() => Boolean, {
     description: 'Eliminar un paciente',
   })
-  @Roles(Role.ADMIN)
   async deletePatient(
     @Args('id', { type: () => ID }) id: string,
   ): Promise<boolean> {
-    return this.patientsService.delete(id);
+    return this.UsuariosService.delete(id);
   }
 
   // 🔗 ========== FIELD RESOLVERS (Relaciones) ==========
