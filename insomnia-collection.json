@@ -1,0 +1,658 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-11-11T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "wrk_api_gateway",
+      "_type": "workspace",
+      "name": "API Gateway - GraphQL",
+      "description": "Colección completa de queries y mutations para el API Gateway",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_base",
+      "_type": "environment",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3000/graphql",
+        "content_type": "application/json"
+      },
+      "dataPropertyOrder": {
+        "&": ["base_url", "content_type"]
+      },
+      "parentId": "wrk_api_gateway"
+    },
+    {
+      "_id": "folder_usuarios",
+      "_type": "request_group",
+      "name": "👥 Usuarios",
+      "parentId": "wrk_api_gateway"
+    },
+    {
+      "_id": "folder_solicitudes",
+      "_type": "request_group",
+      "name": "🧪 Solicitudes y Laboratorio",
+      "parentId": "wrk_api_gateway"
+    },
+    {
+      "_id": "folder_notifications",
+      "_type": "request_group",
+      "name": "📲 Notificaciones",
+      "parentId": "wrk_api_gateway"
+    },
+    {
+      "_id": "req_get_all_roles",
+      "_type": "request",
+      "name": "Get All Roles",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_usuarios",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetAllRoles { roles { id nombre descripcion } }\"\n}"
+      }
+    },
+    {
+      "_id": "req_get_rol_by_id",
+      "_type": "request",
+      "name": "Get Rol By ID",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_usuarios",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetRol($id: ID!) { rol(id: $id) { id nombre descripcion } }\",\n  \"variables\": {\n    \"id\": \"1\"\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_get_usuario_by_id",
+      "_type": "request",
+      "name": "Get Usuario By ID",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_usuarios",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetUsuario($id: ID!) { usuario(id: $id) { id nombreUsuario nombre apellido correo rol { id nombre } activo } }\",\n  \"variables\": {\n    \"id\": \"1\"\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_get_all_usuarios",
+      "_type": "request",
+      "name": "Get All Usuarios",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_usuarios",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetAllUsuarios { usuarios { id nombreUsuario nombre apellido correo rol { id nombre } activo } }\"\n}"
+      }
+    },
+    {
+      "_id": "req_create_usuario",
+      "_type": "request",
+      "name": "Create Usuario",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_usuarios",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"mutation CreateUsuario($input: CreateUsuarioInput!) { createUsuario(input: $input) { id nombreUsuario nombre apellido correo rol { id nombre } activo } }\",\n  \"variables\": {\n    \"input\": {\n      \"nombreUsuario\": \"jperez\",\n      \"nombre\": \"Juan\",\n      \"apellido\": \"Pérez\",\n      \"correo\": \"juan.perez@example.com\",\n      \"contrasena\": \"password123\",\n      \"rolId\": 1\n    }\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_update_usuario",
+      "_type": "request",
+      "name": "Update Usuario",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_usuarios",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"mutation UpdateUsuario($id: ID!, $input: UpdateUsuarioInput!) { updateUsuario(id: $id, input: $input) { id nombreUsuario nombre apellido correo activo } }\",\n  \"variables\": {\n    \"id\": \"1\",\n    \"input\": {\n      \"nombre\": \"Juan Carlos\",\n      \"correo\": \"juan.carlos@example.com\"\n    }\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_login",
+      "_type": "request",
+      "name": "Login",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_usuarios",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"mutation Login($loginInput: LoginUsuarioInput!) { login(loginInput: $loginInput) { success message token usuario { id nombreUsuario nombre apellido correo rol { id nombre } } } }\",\n  \"variables\": {\n    \"loginInput\": {\n      \"nombreUsuario\": \"jperez\",\n      \"contrasena\": \"password123\"\n    }\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_get_all_pacientes",
+      "_type": "request",
+      "name": "Get All Pacientes",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetAllPacientes { pacientes { id nombre apellido correo direccion telefono fechaNacimiento } }\"\n}"
+      }
+    },
+    {
+      "_id": "req_get_paciente",
+      "_type": "request",
+      "name": "Get Paciente By ID",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetPaciente($id: ID!) { paciente(id: $id) { id nombre apellido correo direccion telefono fechaNacimiento } }\",\n  \"variables\": {\n    \"id\": \"1\"\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_create_paciente",
+      "_type": "request",
+      "name": "Create Paciente",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"mutation CreatePaciente($input: CreatePacienteInput!) { createPaciente(input: $input) { id nombre apellido correo direccion telefono fechaNacimiento } }\",\n  \"variables\": {\n    \"input\": {\n      \"nombre\": \"María\",\n      \"apellido\": \"García\",\n      \"correo\": \"maria.garcia@example.com\",\n      \"direccion\": \"Av. Banzer 123\",\n      \"telefono\": \"+591 70123456\",\n      \"fechaNacimiento\": \"1990-05-15\"\n    }\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_update_paciente",
+      "_type": "request",
+      "name": "Update Paciente",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"mutation UpdatePaciente($id: ID!, $input: UpdatePacienteInput!) { updatePaciente(id: $id, input: $input) { id nombre apellido correo direccion telefono fechaNacimiento } }\",\n  \"variables\": {\n    \"id\": \"1\",\n    \"input\": {\n      \"telefono\": \"+591 70999888\",\n      \"direccion\": \"Nueva Dirección 456\"\n    }\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_get_all_solicitudes",
+      "_type": "request",
+      "name": "Get All Solicitudes",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetAllSolicitudes { solicitudes { id fechaSolicitud observaciones pacienteId estadoId } }\"\n}"
+      }
+    },
+    {
+      "_id": "req_get_solicitud",
+      "_type": "request",
+      "name": "Get Solicitud By ID",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetSolicitud($id: ID!) { solicitud(id: $id) { id fechaSolicitud observaciones pacienteId estadoId } }\",\n  \"variables\": {\n    \"id\": \"1\"\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_create_solicitud",
+      "_type": "request",
+      "name": "Create Solicitud",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"mutation CreateSolicitud($input: CreateSolicitudInput!) { createSolicitud(input: $input) { id fechaSolicitud observaciones pacienteId estadoId } }\",\n  \"variables\": {\n    \"input\": {\n      \"pacienteId\": 1,\n      \"estadoId\": 1,\n      \"observaciones\": \"Solicitud urgente\"\n    }\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_update_solicitud",
+      "_type": "request",
+      "name": "Update Solicitud",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"mutation UpdateSolicitud($id: ID!, $input: UpdateSolicitudInput!) { updateSolicitud(id: $id, input: $input) { id fechaSolicitud observaciones pacienteId estadoId } }\",\n  \"variables\": {\n    \"id\": 1,\n    \"input\": {\n      \"observaciones\": \"Solicitud actualizada\",\n      \"estadoId\": 2\n    }\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_get_all_estados",
+      "_type": "request",
+      "name": "Get All Estados Solicitud",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetAllEstados { estadosSolicitud { id nombre descripcion activo } }\"\n}"
+      }
+    },
+    {
+      "_id": "req_get_solicitudes_por_estado",
+      "_type": "request",
+      "name": "Get Solicitudes Por Estado",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetSolicitudesPorEstado($estadoId: ID!) { solicitudesPorEstado(estado_id: $estadoId) { id fechaSolicitud observaciones pacienteId estadoId } }\",\n  \"variables\": {\n    \"estadoId\": 1\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_get_all_tipos_laboratorio",
+      "_type": "request",
+      "name": "Get All Tipos Laboratorio",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetAllTiposLaboratorio { tiposLaboratorio { id nombre descripcion activo } }\"\n}"
+      }
+    },
+    {
+      "_id": "req_get_tipos_laboratorio_activos",
+      "_type": "request",
+      "name": "Get Tipos Laboratorio Activos",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetTiposLaboratorioActivos { tiposLaboratorioActivos { id nombre descripcion activo } }\"\n}"
+      }
+    },
+    {
+      "_id": "req_create_tipo_laboratorio",
+      "_type": "request",
+      "name": "Create Tipo Laboratorio",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"mutation CreateTipoLaboratorio($input: CreateTipoLaboratorioInput!) { createTipoLaboratorio(input: $input) { id nombre descripcion activo } }\",\n  \"variables\": {\n    \"input\": {\n      \"nombre\": \"Laboratorio Clínico\",\n      \"descripcion\": \"Análisis clínicos generales\"\n    }\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_get_all_tipos_examen",
+      "_type": "request",
+      "name": "Get All Tipos Examen",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetAllTiposExamen { tiposExamen { id nombre descripcion precio activo laboratorioId } }\"\n}"
+      }
+    },
+    {
+      "_id": "req_get_tipos_examen_activos",
+      "_type": "request",
+      "name": "Get Tipos Examen Activos",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetTiposExamenActivos { tiposExamenActivos { id nombre descripcion precio activo laboratorioId } }\"\n}"
+      }
+    },
+    {
+      "_id": "req_get_tipos_examen_por_laboratorio",
+      "_type": "request",
+      "name": "Get Tipos Examen Por Laboratorio",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetTiposExamenPorLaboratorio($idLaboratorio: ID!) { tiposExamenActivosPorLaboratorio(idLaboratorio: $idLaboratorio) { id nombre descripcion precio activo laboratorioId } }\",\n  \"variables\": {\n    \"idLaboratorio\": 1\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_create_tipo_examen",
+      "_type": "request",
+      "name": "Create Tipo Examen",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"mutation CreateTipoExamen($input: CreateTipoExamenInput!) { createTipoExamen(input: $input) { id nombre descripcion precio activo laboratorioId } }\",\n  \"variables\": {\n    \"input\": {\n      \"nombre\": \"Hemograma Completo\",\n      \"descripcion\": \"Análisis completo de sangre\",\n      \"precio\": 50.00,\n      \"laboratorioId\": 1\n    }\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_get_all_resultados",
+      "_type": "request",
+      "name": "Get All Resultados",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetAllResultados { resultados { id solicitudId fechaResultado observaciones archivoResultado } }\"\n}"
+      }
+    },
+    {
+      "_id": "req_get_resultado",
+      "_type": "request",
+      "name": "Get Resultado By ID",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetResultado($id: ID!) { resultado(id: $id) { id solicitudId fechaResultado observaciones archivoResultado } }\",\n  \"variables\": {\n    \"id\": \"1\"\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_get_resultado_por_solicitud",
+      "_type": "request",
+      "name": "Get Resultado Por Solicitud",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetResultadoPorSolicitud($solicitudId: ID!) { resultadoPorSolicitud(solicitudId: $solicitudId) { id solicitudId fechaResultado observaciones archivoResultado } }\",\n  \"variables\": {\n    \"solicitudId\": \"1\"\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_create_resultado",
+      "_type": "request",
+      "name": "Create Resultado",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"mutation CreateResultado($input: CreateResultadoInput!) { createResultado(input: $input) { id solicitudId fechaResultado observaciones archivoResultado } }\",\n  \"variables\": {\n    \"input\": {\n      \"solicitudId\": 1,\n      \"observaciones\": \"Resultados normales\",\n      \"archivoResultado\": \"resultado_001.pdf\"\n    }\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_update_resultado",
+      "_type": "request",
+      "name": "Update Resultado",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"mutation UpdateResultado($id: ID!, $input: UpdateResultadoInput!) { updateResultado(id: $id, input: $input) { id solicitudId fechaResultado observaciones archivoResultado } }\",\n  \"variables\": {\n    \"id\": \"1\",\n    \"input\": {\n      \"observaciones\": \"Resultados actualizados\",\n      \"archivoResultado\": \"resultado_001_v2.pdf\"\n    }\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_get_all_examenes_solicitud",
+      "_type": "request",
+      "name": "Get All Examenes Solicitud",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetAllExamenesSolicitud { examenesSolicitud { id solicitudId tipoExamenId observaciones } }\"\n}"
+      }
+    },
+    {
+      "_id": "req_get_examenes_por_solicitud",
+      "_type": "request",
+      "name": "Get Examenes Por Solicitud",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"query GetExamenesPorSolicitud($solicitudId: ID!) { examenesPorSolicitud(solicitudId: $solicitudId) { id solicitudId tipoExamenId observaciones } }\",\n  \"variables\": {\n    \"solicitudId\": 1\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_create_examen_solicitud",
+      "_type": "request",
+      "name": "Create Examen Solicitud",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"mutation CreateExamenSolicitud($input: CreateExamenSolicitudInput!) { createExamenSolicitud(input: $input) { id solicitudId tipoExamenId observaciones } }\",\n  \"variables\": {\n    \"input\": {\n      \"solicitudId\": 1,\n      \"tipoExamenId\": 1,\n      \"observaciones\": \"Examen programado\"\n    }\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_update_examen_solicitud",
+      "_type": "request",
+      "name": "Update Examen Solicitud",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_solicitudes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"mutation UpdateExamenSolicitud($id: ID!, $input: UpdateExamenSolicitudInput!) { updateExamenSolicitud(id: $id, input: $input) { id solicitudId tipoExamenId observaciones } }\",\n  \"variables\": {\n    \"id\": 1,\n    \"input\": {\n      \"observaciones\": \"Examen completado\"\n    }\n  }\n}"
+      }
+    },
+    {
+      "_id": "req_send_notification",
+      "_type": "request",
+      "name": "Send Push Notification",
+      "method": "POST",
+      "url": "{{ _.base_url }}",
+      "parentId": "folder_notifications",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"query\": \"mutation SendNotification($input: NotificacionPushInput!) { notificacionPush(input: $input) { success message timestamp } }\",\n  \"variables\": {\n    \"input\": {\n      \"tokens\": [\"device_token_1\", \"device_token_2\"],\n      \"title\": \"Nueva Solicitud\",\n      \"body\": \"Tienes una nueva solicitud de análisis pendiente\",\n      \"data\": {\n        \"solicitudId\": \"123\",\n        \"tipo\": \"urgente\",\n        \"prioridad\": \"alta\"\n      }\n    }\n  }\n}"
+      }
+    }
+  ]
+}

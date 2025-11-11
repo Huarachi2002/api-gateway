@@ -18,6 +18,15 @@ export class UpdateUsuarioInput {
   @IsBoolean()
   activo?: boolean;
 
+  @Field(() => Number, { nullable: true })
+  @IsOptional()
+  idPaciente?: number;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  tokenFcm?: string;
+
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()

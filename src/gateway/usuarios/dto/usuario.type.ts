@@ -12,6 +12,12 @@ export class Usuario {
   @Field()
   contrasena: string;
 
+  @Field({nullable: true})
+  idPaciente?: number;
+
+  @Field({ nullable: true })
+  tokenFcm?: string;
+
   @Field()
   activo: boolean;
 

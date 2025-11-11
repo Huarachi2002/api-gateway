@@ -52,8 +52,10 @@ input CreateTipoLaboratorioInput {
 input CreateUsuarioInput {
   activo: Boolean!
   contrasena: String!
+  idPaciente: Float!
   idRol: String!
   nombreUsuario: String!
+  tokenFcm: String!
 }
 
 """
@@ -87,6 +89,7 @@ type LoginResponse {
 input LoginUsuarioInput {
   contrasena: String!
   nombreUsuario: String!
+  tokenFcm: String
 }
 
 type Mutation {
@@ -258,6 +261,9 @@ type Query {
   """Obtener un usuario por su ID"""
   usuario(id: ID!): Usuario!
 
+  """Obtener un usuario por su ID de paciente"""
+  usuarioPorPacienteId(idPaciente: ID!): Usuario!
+
   """Obtener todos los usuarios"""
   usuarios: [Usuario!]!
 }
@@ -349,8 +355,10 @@ input UpdateTipoLaboratorioInput {
 input UpdateUsuarioInput {
   activo: Boolean
   contrasena: String
+  idPaciente: Float
   idRol: String
   nombreUsuario: String
+  tokenFcm: String
 }
 
 type UserType {
@@ -366,6 +374,8 @@ type Usuario {
   _id: String!
   activo: Boolean!
   contrasena: String!
+  idPaciente: Float
   nombreUsuario: String!
   rol: Rol!
+  tokenFcm: String
 }

@@ -31,6 +31,22 @@
 $ npm install
 ```
 
+## 🌱 Seed Database with Test Data
+
+Populate your database with test data for development:
+
+```bash
+# Create all test data (users, patients, lab types, exams, requests)
+$ npm run seed
+
+# Create only test patients (quick)
+$ npm run seed:pacientes
+```
+
+📖 **Full documentation**: See [src/seed/README.md](./src/seed/README.md)  
+🚀 **Quick start**: See [src/seed/QUICKSTART.md](./src/seed/QUICKSTART.md)  
+📊 **Data preview**: See [src/seed/EJEMPLO_DATOS.md](./src/seed/EJEMPLO_DATOS.md)
+
 ## Compile and run the project
 
 ```bash

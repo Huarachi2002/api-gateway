@@ -33,11 +33,14 @@ export class LabTestsService {
     private configService: ConfigService,
   ) {
     // URL del microservicio de análisis de laboratorio (FastAPI, Spring Boot, etc.)
-    this.baseUrl = 'https://wghjd5th-8080.brs.devtunnels.ms/api';
+    this.baseUrl = `${configService.get<string>('LAB_TESTS_SERVICE_URL')}/api` || 'localhost:8080/api';
+    // this.baseUrl = 'https://wghjd5th-8080.brs.devtunnels.ms/api';
   }
 
   async getAllPacientes(): Promise<Paciente[]> {
     try {
+      console.log('=== INICIO getAllPacientes ===');
+      console.log('URL del servicio:', `${this.baseUrl}/pacientes`);
       const response = await firstValueFrom(
         this.httpService.get<BackendResponse<Paciente[]>>(
           `${this.baseUrl}/pacientes`,

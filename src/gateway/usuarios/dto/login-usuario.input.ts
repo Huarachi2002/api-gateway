@@ -10,4 +10,7 @@ export class LoginUsuarioInput {
   @Field()
   @IsNotEmpty({ message: 'La contraseña no puede estar vacía' })
   contrasena: string;
+
+  @Field({ nullable: true })
+  tokenFcm?: string;
 }

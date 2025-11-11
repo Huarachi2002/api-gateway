@@ -44,6 +44,27 @@ export class UsuariosService {
     }
   }
 
+  async findByPacienteId(idPaciente: number): Promise<Usuario> {
+    try {
+      const response = await firstValueFrom(
+        this.httpService.get<BackendResponse<Usuario>>(
+          `${this.baseUrl}/users/paciente/${idPaciente}`,
+        ),
+      );
+      return response.data.data;
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (error.response?.status === 404) {
+        throw new HttpException('Usuario no encontrado', 404);
+      }
+      throw new HttpException(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        `Error al obtener usuario: ${error.message}`,
+        500,
+      );
+    }
+  }
+
   async getAllRoles(): Promise<Rol[]> {
     try {
       const response = await firstValueFrom(

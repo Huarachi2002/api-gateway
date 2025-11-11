@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsBoolean, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateUsuarioInput {
@@ -14,6 +14,16 @@ export class CreateUsuarioInput {
   @Field()
   @IsBoolean()
   activo: boolean;
+
+  @Field()
+  @IsOptional()
+  @IsNumber()
+  idPaciente: number;
+
+  @Field()
+  @IsOptional()
+  @IsString()
+  tokenFcm: string;
 
   @Field()
   @IsString()

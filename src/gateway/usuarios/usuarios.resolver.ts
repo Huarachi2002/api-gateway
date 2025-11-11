@@ -51,6 +51,16 @@ export class UsuariosResolver {
     return this.UsuariosService.findById(id);
   }
 
+  @Query(() => Usuario, {
+    name: 'usuarioPorPacienteId',
+    description: 'Obtener un usuario por su ID de paciente',
+  })
+  async getUsuarioByPacienteId(
+    @Args('idPaciente', { type: () => ID }) idPaciente: number,
+  ): Promise<Usuario> {
+    return this.UsuariosService.findByPacienteId(idPaciente);
+  }
+
   @Query(() => [Usuario], {
     name: 'usuarios',
     description: 'Obtener todos los usuarios',
