@@ -2,9 +2,12 @@ import { Injectable, HttpException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
-import { Patient } from './dto/paciente.type';
-import { CreatePatientInput } from './dto/create-paciente.input';
-import { UpdatePatientInput } from './dto/update-paciente.input';
+import { Usuario } from './dto/usuario.type';
+import { Response as BackendResponse } from '../../common/interfaces/reponse.interface';
+import { CreateUsuarioInput } from './dto/create-usuario.input';
+import { UpdateUsuarioInput } from './dto/update-usuario.input';
+import { LoginResponse } from './interfaces/login-response.interface';
+import { Rol } from './dto/rol.type';
 
 @Injectable()
 export class UsuariosService {
@@ -16,167 +19,160 @@ export class UsuariosService {
   ) {
     // URL del microservicio de usuarios (Spring Boot, FastAPI, etc.)
     this.baseUrl =
-      this.configService.get('USUARIOS_SERVICE_URL') ||
-      'http://localhost:3002/api/';
+      `${this.configService.get('USUARIOS_SERVICE_URL')}/api` ||
+      'http://localhost:3002/api';
   }
 
-  /**
-   * Obtener usuario   por ID
-   * Llama a: GET http://usuarios-service:3002/api/usuarios/{id}
-   *
-   * Ejemplo de respuesta del microservicio:
-   * {
-   *   "id": "123",
-   *   "name": "Juan Pérez",
-   *   "email": "juan@example.com",
-   * }
-   */
-  async findById(id: string): Promise<Patient> {
+  async findById(id: string): Promise<Usuario> {
     try {
       const response = await firstValueFrom(
-        this.httpService.get<Patient>(`${this.baseUrl}/${id}`),
+        this.httpService.get<BackendResponse<Usuario>>(
+          `${this.baseUrl}/users/${id}`,
+        ),
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.response?.status === 404) {
-        throw new HttpException('Paciente no encontrado', 404);
+        throw new HttpException('Usuario no encontrado', 404);
       }
       throw new HttpException(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        `Error al obtener paciente: ${error.message}`,
+        `Error al obtener usuario: ${error.message}`,
         500,
       );
     }
   }
 
-  /**
-   * Listar todos los pacientes con paginación
-   * Llama a: GET http://patient-service:8080/api/patients?limit=10&offset=0
-   */
-  async findAll(limit = 10, offset = 0): Promise<Patient[]> {
+  async getAllRoles(): Promise<Rol[]> {
     try {
       const response = await firstValueFrom(
-        this.httpService.get<Patient[]>(
-          `${this.baseUrl}?limit=${limit}&offset=${offset}`,
-        ),
+        this.httpService.get<BackendResponse<Rol[]>>(`${this.baseUrl}/roles`),
       );
-      return response.data;
+      return response.data.data || [];
     } catch (error) {
       throw new HttpException(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        `Error al listar pacientes: ${error.message}`,
+        `Error al obtener roles: ${error.message}`,
         500,
       );
     }
   }
 
-  /**
-   * Buscar pacientes por nombre o email
-   * Llama a: GET http://patient-service:8080/api/patients/search?query=juan
-   */
-  async search(query: string): Promise<Patient[]> {
+  async getRolById(id: string): Promise<Rol> {
     try {
       const response = await firstValueFrom(
-        this.httpService.get<Patient[]>(
-          `${this.baseUrl}/search?query=${query}`,
+        this.httpService.get<BackendResponse<Rol>>(
+          `${this.baseUrl}/roles/${id}`,
         ),
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       throw new HttpException(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        `Error al buscar pacientes: ${error.message}`,
+        `Error al obtener rol: ${error.message}`,
         500,
       );
     }
   }
 
-  /**
-   * Crear nuevo paciente
-   * Llama a: POST http://patient-service:8080/api/patients
-   *
-   * Body: {
-   *   "name": "María García",
-   *   "email": "maria@example.com",
-   *   "age": 28,
-   *   "phone": "+591 70987654",
-   *   "address": "Calle Libertad 456"
-   * }
-   */
-  async create(input: CreatePatientInput): Promise<Patient> {
+  async findAll(): Promise<Usuario[]> {
     try {
       const response = await firstValueFrom(
-        this.httpService.post<Patient>(this.baseUrl, input),
+        this.httpService.get<BackendResponse<Usuario[]>>(
+          `${this.baseUrl}/users`,
+        ),
       );
-      return response.data;
+      console.log('Respuesta de findAll usuarios:', response.data);
+      return response.data.data || [];
+    } catch (error) {
+      throw new HttpException(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        `Error al listar usuarios: ${error.message}`,
+        500,
+      );
+    }
+  }
+
+  async createUser(input: CreateUsuarioInput): Promise<Usuario> {
+    try {
+      const response = await firstValueFrom(
+        this.httpService.post<BackendResponse<Usuario>>(
+          `${this.baseUrl}/users`,
+          input,
+        ),
+      );
+      return response.data.data;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.response?.status === 409) {
-        throw new HttpException('El email ya está registrado', 409);
+        throw new HttpException('El usuario ya está registrado', 409);
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      throw new HttpException(`Error al crear paciente: ${error.message}`, 500);
+      throw new HttpException(`Error al crear usuario: ${error.message}`, 500);
     }
   }
 
-  /**
-   * Actualizar paciente existente
-   * Llama a: PUT http://patient-service:8080/api/patients/{id}
-   */
-  async update(id: string, input: UpdatePatientInput): Promise<Patient> {
+  async updateUser(id: string, input: UpdateUsuarioInput): Promise<Usuario> {
     try {
       const response = await firstValueFrom(
-        this.httpService.put<Patient>(`${this.baseUrl}/${id}`, input),
+        this.httpService.put<BackendResponse<Usuario>>(
+          `${this.baseUrl}/users/${id}`,
+          input,
+        ),
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.response?.status === 404) {
-        throw new HttpException('Paciente no encontrado', 404);
+        throw new HttpException('Usuario no encontrado', 404);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (error.response?.status === 409) {
+        throw new HttpException(
+          'El nombre de usuario ya está en uso. Por favor, elige otro nombre.',
+          409,
+        );
       }
       throw new HttpException(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        `Error al actualizar paciente: ${error.message}`,
+        `Error al actualizar usuario: ${error.message}`,
         500,
       );
     }
   }
 
-  /**
-   * Eliminar paciente (soft delete)
-   * Llama a: DELETE http://patient-service:8080/api/patients/{id}
-   */
-  async delete(id: string): Promise<boolean> {
-    try {
-      await firstValueFrom(this.httpService.delete(`${this.baseUrl}/${id}`));
-      return true;
-    } catch (error) {
-      if (error.response?.status === 404) {
-        throw new HttpException('Paciente no encontrado', 404);
-      }
-      throw new HttpException(
-        `Error al eliminar paciente: ${error.message}`,
-        500,
-      );
-    }
-  }
-
-  /**
-   * Obtener estadísticas de pacientes
-   * Llama a: GET http://patient-service:8080/api/patients/stats
-   */
-  async getStats(): Promise<any> {
+  async login(username: string, password: string): Promise<LoginResponse> {
     try {
       const response = await firstValueFrom(
-        this.httpService.get(`${this.baseUrl}/stats`),
+        this.httpService.post<BackendResponse<LoginResponse>>(
+          `${this.baseUrl}/auth/login`,
+          { nombreUsuario: username, contrasena: password },
+        ),
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
-      throw new HttpException(
-        `Error al obtener estadísticas: ${error.message}`,
-        500,
+      if (error.response?.status === 401) {
+        throw new HttpException('Credenciales inválidas', 401);
+      }
+      throw new HttpException(`Error al iniciar sesión: ${error.message}`, 500);
+    }
+  }
+
+  async refreshToken(refreshToken: string): Promise<LoginResponse> {
+    try {
+      const response = await firstValueFrom(
+        this.httpService.post<BackendResponse<LoginResponse>>(
+          `${this.baseUrl}/users/refresh`,
+          { refreshToken },
+        ),
       );
+      return response.data.data;
+    } catch (error) {
+      if (error.response?.status === 401) {
+        throw new HttpException('Token inválido o expirado', 401);
+      }
+      throw new HttpException(`Error al renovar token: ${error.message}`, 500);
     }
   }
 }

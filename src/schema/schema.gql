@@ -8,6 +8,15 @@ type AuthResponse {
   user: UserType!
 }
 
+input CreateEstadoSolicitudInput {
+  descripcion: String!
+}
+
+input CreateExamenSolicitudInput {
+  solicitudId: Float!
+  tipoExamenId: Float!
+}
+
 input CreatePacienteInput {
   apellido: String!
   correo: String!
@@ -17,12 +26,34 @@ input CreatePacienteInput {
   telefono: String!
 }
 
-input CreatePatientInput {
-  apellido: String!
-  datos_biometricos: String
-  foto_carnet_b64: String!
-  nombre: String!
-  telefono_whatsapp: String
+input CreateResultadoInput {
+  fechaPublicacion: DateTime!
+  idSolicitud: Float!
+  urlPdfResultado: String!
+}
+
+input CreateSolicitudInput {
+  estado_id: Float!
+  paciente_id: Float!
+  url_foto_orden: String!
+}
+
+input CreateTipoExamenInput {
+  descripcion: String!
+  estado: Boolean!
+  idTipoLaboratorio: Float!
+}
+
+input CreateTipoLaboratorioInput {
+  descripcion: String!
+  estado: Boolean!
+}
+
+input CreateUsuarioInput {
+  activo: Boolean!
+  contrasena: String!
+  idRol: String!
+  nombreUsuario: String!
 }
 
 """
@@ -30,23 +61,64 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-input LoginInput {
-  email: String!
-  password: String!
+type EstadoSolicitud {
+  descripcion: String!
+  id: Float!
+}
+
+type ExamenSolicitud {
+  id: Float!
+  solicitud_id: Float!
+  tipo_examen_id: Float!
+}
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
+
+type LoginResponse {
+  accessToken: String!
+  expiresIn: Float
+  refreshToken: String!
+  usuario: Usuario!
+}
+
+input LoginUsuarioInput {
+  contrasena: String!
+  nombreUsuario: String!
 }
 
 type Mutation {
+  """Crear un nuevo estado de solicitud"""
+  createEstadoSolicitud(input: CreateEstadoSolicitudInput!): EstadoSolicitud!
+
+  """Crear un nuevo examen de solicitud"""
+  createExamenSolicitud(input: CreateExamenSolicitudInput!): ExamenSolicitud!
+
   """Crear un nuevo paciente"""
   createPaciente(input: CreatePacienteInput!): Paciente!
 
-  """Crear un nuevo paciente"""
-  createPatient(input: CreatePatientInput!): Patient!
+  """Crear un nuevo resultado"""
+  createResultado(input: CreateResultadoInput!): Resultado!
 
-  """Eliminar un paciente"""
-  deletePatient(id: ID!): Boolean!
+  """Crear una nueva solicitud"""
+  createSolicitud(input: CreateSolicitudInput!): Solicitud!
 
-  """Iniciar sesion de usuario"""
-  login(loginInput: LoginInput!): AuthResponse!
+  """Crear un nuevo tipo de examen"""
+  createTipoExamen(input: CreateTipoExamenInput!): TipoExamen!
+
+  """Crear un nuevo tipo de laboratorio"""
+  createTipoLaboratorio(input: CreateTipoLaboratorioInput!): TipoLaboratorio!
+
+  """Crear un nuevo usuario"""
+  createUsuario(input: CreateUsuarioInput!): Usuario!
+
+  """Iniciar sesión de un usuario"""
+  login(loginInput: LoginUsuarioInput!): LoginResponse!
+
+  """Enviar una notificación push a uno o varios dispositivos"""
+  notificacionPush(input: NotificacionPushInput!): NotificacionResponse!
 
   """Refrescar token"""
   refreshToken(refreshToken: String!): AuthResponse!
@@ -54,11 +126,50 @@ type Mutation {
   """Registrar nuevo usuario"""
   register(registerInput: RegisterInput!): AuthResponse!
 
+  """Actualizar un estado de solicitud existente"""
+  updateEstadoSolicitud(id: ID!, input: UpdateEstadoSolicitudInput!): EstadoSolicitud!
+
+  """Actualizar un examen de solicitud existente"""
+  updateExamenSolicitud(id: ID!, input: UpdateExamenSolicitudInput!): ExamenSolicitud!
+
   """Actualizar un paciente existente"""
   updatePaciente(id: ID!, input: UpdatePacienteInput!): Paciente!
 
-  """Actualizar un paciente existente"""
-  updatePatient(id: ID!, input: UpdatePatientInput!): Patient!
+  """Actualizar un resultado existente"""
+  updateResultado(id: ID!, input: UpdateResultadoInput!): Resultado!
+
+  """Actualizar una solicitud existente"""
+  updateSolicitud(id: ID!, input: UpdateSolicitudInput!): Solicitud!
+
+  """Actualizar un tipo de examen existente"""
+  updateTipoExamen(id: ID!, input: UpdateTipoExamenInput!): TipoExamen!
+
+  """Actualizar un tipo de laboratorio existente"""
+  updateTipoLaboratorio(id: ID!, input: UpdateTipoLaboratorioInput!): TipoLaboratorio!
+
+  """Actualizar un usuario existente"""
+  updateUsuario(id: ID!, input: UpdateUsuarioInput!): Usuario!
+}
+
+input NotificacionPushInput {
+  """Cuerpo del mensaje de la notificación"""
+  body: String!
+
+  """Datos adicionales opcionales en formato JSON"""
+  data: JSONObject
+
+  """Título de la notificación"""
+  title: String!
+
+  """Array de tokens de dispositivos para enviar la notificación"""
+  tokens: [String!]!
+}
+
+type NotificacionResponse {
+  data: String
+  message: String!
+  success: String
+  timestamp: String
 }
 
 type Paciente {
@@ -71,26 +182,24 @@ type Paciente {
   telefono: String!
 }
 
-type Patient {
-  apellido: String!
-  createdAt: DateTime!
-  datos_biometricos: String
-  foto_carnet_b64: String!
-  id: ID!
-
-  """Análisis de laboratorio del paciente"""
-  labTests: [Resultado!]!
-  nombre: String!
-  telefono_whatsapp: String
-  updatedAt: DateTime
-}
-
 type Query {
-  """Obtener un análisis de laboratorio por ID"""
-  labTest(id: ID!): Resultado!
+  """Obtener un estado de solicitud por ID"""
+  estadoSolicitud(id: ID!): EstadoSolicitud!
 
-  """Obtener análisis de laboratorio de un paciente"""
-  labTestsByPatient(patientId: ID!): [Resultado!]!
+  """Obtener todos los estados de solicitud"""
+  estadosSolicitud: [EstadoSolicitud!]!
+
+  """Obtener todos los exámenes por ID de tipo de examen"""
+  examenPorTipoExamen(tipoExamenId: ID!): [ExamenSolicitud!]!
+
+  """Obtener un examen de solicitud por ID"""
+  examenSolicitud(id: ID!): ExamenSolicitud!
+
+  """Obtener todos los exámenes por ID de solicitud"""
+  examenesPorSolicitud(solicitudId: ID!): [ExamenSolicitud!]!
+
+  """Obtener todos los exámenes de una solicitud"""
+  examenesSolicitud: [ExamenSolicitud!]!
 
   """Obtener usuario actual"""
   me: UserType!
@@ -98,14 +207,59 @@ type Query {
   """Obtener un paciente por ID"""
   paciente(id: ID!): Paciente!
 
-  """Obtener un paciente por su ID"""
-  patient(id: ID!): Patient!
+  """Obtener todos los pacientes"""
+  pacientes: [Paciente!]!
 
-  """Listar todos los pacientes (con paginación)"""
-  patients(limit: Float = 10, offset: Float = 0): [Patient!]!
+  """Obtener un resultado por ID"""
+  resultado(id: ID!): Resultado!
 
-  """Buscar pacientes por nombre o email"""
-  searchPatients(query: String!): [Patient!]!
+  """Obtener un resultado por su solicitud"""
+  resultadoPorSolicitud(solicitudId: ID!): Resultado!
+
+  """Obtener todos los resultados"""
+  resultados: [Resultado!]!
+
+  """Obtener un rol por su ID"""
+  rol(id: ID!): Rol!
+
+  """Obtener todos los roles disponibles"""
+  roles: [Rol!]!
+
+  """Obtener una solicitud por ID"""
+  solicitud(id: ID!): Solicitud!
+
+  """Obtener todas las solicitudes"""
+  solicitudes: [Solicitud!]!
+
+  """Obtener todas las solicitudes por estado_id"""
+  solicitudesPorEstado(estado_id: ID!): [Solicitud!]!
+
+  """Obtener un tipo de examen por ID"""
+  tipoExamen(id: ID!): TipoExamen!
+
+  """Obtener un tipo de laboratorio por ID"""
+  tipoLaboratorio(id: ID!): TipoLaboratorio!
+
+  """Obtener todos los tipos de examen"""
+  tiposExamen: [TipoExamen!]!
+
+  """Obtener todos los tipos de examen activos"""
+  tiposExamenActivos: [TipoExamen!]!
+
+  """Obtener todos los tipos de examen activos por id de laboratorio"""
+  tiposExamenActivosPorLaboratorio(idLaboratorio: ID!): [TipoExamen!]!
+
+  """Obtener todos los tipos de laboratorio"""
+  tiposLaboratorio: [TipoLaboratorio!]!
+
+  """Obtener todos los tipos de laboratorio activos"""
+  tiposLaboratorioActivos: [TipoLaboratorio!]!
+
+  """Obtener un usuario por su ID"""
+  usuario(id: ID!): Usuario!
+
+  """Obtener todos los usuarios"""
+  usuarios: [Usuario!]!
 }
 
 input RegisterInput {
@@ -117,9 +271,47 @@ input RegisterInput {
 
 type Resultado {
   fecha_publicacion: DateTime!
-  resultado_id: Float!
+  id: Float!
   solicitud_id: String!
   url_pdf_resultado: String!
+}
+
+type Rol {
+  _id: String!
+  descripcion: String!
+  estado: Boolean!
+}
+
+type Solicitud {
+  estado: String!
+  estado_solicitud_id: Float!
+  fecha_asistencia: DateTime!
+  id: Float!
+  paciente_id: String!
+  recomendacion: String!
+  url_foto_orden: String!
+}
+
+type TipoExamen {
+  descripcion: String!
+  estado: Boolean!
+  id: Float!
+  tipo_laboratorio_id: Float!
+}
+
+type TipoLaboratorio {
+  descripcion: String!
+  estado: Boolean!
+  id: Float!
+}
+
+input UpdateEstadoSolicitudInput {
+  descripcion: String!
+}
+
+input UpdateExamenSolicitudInput {
+  solicitudId: Float!
+  tipoExamenId: Float!
 }
 
 input UpdatePacienteInput {
@@ -131,12 +323,34 @@ input UpdatePacienteInput {
   telefono: String!
 }
 
-input UpdatePatientInput {
-  apellido: String
-  datos_biometricos: String
-  foto_carnet_b64: String
-  nombre: String
-  telefono_whatsapp: String
+input UpdateResultadoInput {
+  fechaPublicacion: DateTime!
+  idSolicitud: Float!
+  urlPdfResultado: String!
+}
+
+input UpdateSolicitudInput {
+  estado_id: Float!
+  paciente_id: Float!
+  url_foto_orden: String!
+}
+
+input UpdateTipoExamenInput {
+  descripcion: String!
+  estado: Boolean!
+  idTipoLaboratorio: Float!
+}
+
+input UpdateTipoLaboratorioInput {
+  descripcion: String!
+  estado: Boolean!
+}
+
+input UpdateUsuarioInput {
+  activo: Boolean
+  contrasena: String
+  idRol: String
+  nombreUsuario: String
 }
 
 type UserType {
@@ -146,4 +360,12 @@ type UserType {
   isActive: Boolean!
   name: String!
   role: String!
+}
+
+type Usuario {
+  _id: String!
+  activo: Boolean!
+  contrasena: String!
+  nombreUsuario: String!
+  rol: Rol!
 }

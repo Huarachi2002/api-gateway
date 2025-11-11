@@ -3,13 +3,11 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { UsuariosModule } from './gateway/usuarios/usuarios.module';
 import { LabTestsModule } from './gateway/solicitudes/solicitudes.module';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { GqlThrottlerGuard } from './common/guards/graphql-throttler.guard';
+import { NotificacionModule } from './gateway/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -70,6 +68,7 @@ import { GqlThrottlerGuard } from './common/guards/graphql-throttler.guard';
     AuthModule,
     UsuariosModule,
     LabTestsModule,
+    NotificacionModule,
   ],
   providers: [
     // 🔓 SEGURIDAD DESACTIVADA PARA DESARROLLO

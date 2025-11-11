@@ -1,16 +1,13 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()
-export class Resultado {
+export class ExamenSolicitud {
   @Field()
   id: number;
 
   @Field()
-  solicitud_id: string;
+  solicitud_id: number;
 
   @Field()
-  url_pdf_resultado: string;
-
-  @Field()
-  fecha_publicacion: Date;
+  tipo_examen_id: number;
 }
